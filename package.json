@@ -1,0 +1,19 @@
+{
+  "name": "modifier-maker",
+  "version": "0.0.1",
+  "description": "Some sort of interface specifically designed for creating modifiers in Civ VI",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Wild-W/modifier-maker.git"
+  },
+  "author": "WildW",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Wild-W/modifier-maker/issues"
+  },
+  "homepage": "https://github.com/Wild-W/modifier-maker#readme"
+}

@@ -1,0 +1,173 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.com/product.schema.json",
+  "title": "Modifier Maker",
+  "description": "Interface for creating Modifiers",
+  "type": "object",
+  "properties": {
+    "Modifiers": {
+      "description": "List of modifiers",
+      "type": "array",
+      "items": [
+        {
+          "type": "object",
+          "properties": {
+            "ModifierId": {
+              "type": "string"
+            },
+            "ModifierType": {
+              "type": "null"
+            },
+            "RunOnce": {
+              "type": "boolean"
+            },
+            "NewOnly": {
+              "type": "boolean"
+            },
+            "Permanent": {
+              "type": "boolean"
+            },
+            "Repeatable": {
+              "type": "boolean"
+            },
+            "OwnerStackLimit": {
+              "type": "null"
+            },
+            "SubjectStackLimit": {
+              "type": "null"
+            },
+            "OwnerRequirementSetId": {
+              "type": "null"
+            },
+            "SubjectRequirementSetId": {
+              "type": "null"
+            },
+            "CollectionType": {
+              "type": "string"
+            },
+            "EffectType": {
+              "type": "string"
+            },
+            "Arguments": {
+              "type": "object",
+              "properties": {
+                "Amount": {
+                  "type": "object",
+                  "properties": {
+                    "Value": {
+                      "type": "integer"
+                    },
+                    "Type": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "Value",
+                    "Type"
+                  ]
+                }
+              },
+              "required": [
+                "Amount"
+              ]
+            },
+            "SubjectRequirementSet": {
+              "type": "object",
+              "properties": {
+                "RequirementSetType": {
+                  "type": "string"
+                },
+                "Requirements": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "RequirementType": {
+                          "type": "string"
+                        },
+                        "Inverse": {
+                          "type": "boolean"
+                        },
+                        "Arguments": {
+                          "type": "object",
+                          "properties": {
+                            "PropertyName": {
+                              "type": "object",
+                              "properties": {
+                                "Value": {
+                                  "type": "string"
+                                },
+                                "Type": {
+                                  "type": "string"
+                                }
+                              },
+                              "required": [
+                                "Value"
+                              ]
+                            },
+                            "PropertyMinimum": {
+                              "type": "object",
+                              "properties": {
+                                "Value": {
+                                  "type": "any"
+                                },
+                                "Type": {
+                                  "type": "string"
+                                }
+                              },
+                              "required": [
+                                "Value"
+                              ]
+                            }
+                          }
+                        }
+                      },
+                      "required": [
+                        "RequirementType"
+                      ]
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "RequirementSetType",
+                "Requirements"
+              ]
+            },
+            "OwnerRequirementSet": {
+              "type": "object"
+            },
+            "Connections": {
+              "type": "object",
+              "properties": {
+                "PolicyModifiers": {
+                  "type": "object",
+                  "properties": {
+                    "PolicyType": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "PolicyType"
+                  ]
+                }
+              }
+            }
+          },
+          "required": [
+            "ModifierId"
+          ]
+        }
+      ]
+    },
+    "ModifierTypes": {
+      "description": "Optional array of new ModifierTypes",
+      "type": "array"
+    },
+    "RequirementSets": {
+      "description": "Optional object of new RequirementSets",
+      "type": "array"
+    }
+  }
+}

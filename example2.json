@@ -1,0 +1,59 @@
+{
+    "$schema": "./schema.json",
+    "Modifiers": [
+        {
+            "ModifierId": "POLICY_TEST_MODIFIER",
+            "ModifierType": null,
+
+            "RunOnce": false,
+            "NewOnly": false,
+            "Permanent": false,
+            "Repeatable": false,
+            "OwnerStackLimit": null,
+            "SubjectStackLimit": null,
+
+            "OwnerRequirementSetId": null,
+            "SubjectRequirementSetId": null,
+
+            "CollectionType": "COLLECTION_PLAYER_CAPITAL_CITY",
+            "EffectType": "EFFECT_ADJUST_CITY_HIT_POINTS",
+
+            "Arguments": {
+                "Amount": {
+                    "Value": -100,
+                    "Type": "ARGTYPE_IDENTITY"
+                }
+            },
+
+            "SubjectRequirementSet": {
+                "RequirementSetType": "REQUIREMENTSET_TEST_ALL",
+                "Requirements": [
+                    {
+                        "RequirementType": "REQUIREMENT_PLOT_PROPERTY_MATCHES",
+                        "Inverse": false,
+
+                        "Arguments": {
+                            "PropertyName": {
+                                "Value": "WW_test_property",
+                                "Type": "ARGTYPE_IDENTITY"
+                            },
+                            "PropertyMinimum": {
+                                "Value": 1,
+                                "Type": "ARGTYPE_IDENTITY"
+                            }
+                        }
+                    }
+                ]
+            },
+            "OwnerRequirementSet": {},
+
+            "Connections": {
+                "PolicyModifiers": {
+                    "PolicyType": "POLICY_TEST"
+                }
+            }
+        }
+    ],
+    "ModifierTypes": [],
+    "RequirementSets": []
+}

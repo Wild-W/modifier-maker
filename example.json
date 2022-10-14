@@ -1,0 +1,41 @@
+{
+    "Modifiers": [
+        {
+            "ModifierId": "POLICY_TEST_MODIFIER",
+
+            "CollectionType": "COLLECTION_PLAYER_CAPITAL_CITY",
+            "EffectType": "EFFECT_ADJUST_CITY_HIT_POINTS",
+
+            "Arguments": {
+                "Amount": {
+                    "Value": -100
+                }
+            },
+
+            "SubjectRequirementSet": {
+                "RequirementSetType": "REQUIREMENTSET_TEST_ALL",
+                "Requirements": [
+                    {
+                        "RequirementId": "REQ_WW_CITY_PLOT_HAS_TEST_PROP",
+                        "RequirementType": "REQUIREMENT_PLOT_PROPERTY_MATCHES",
+
+                        "Arguments": {
+                            "PropertyName": {
+                                "Value": "WW_test_property"
+                            },
+                            "PropertyMinimum": {
+                                "Value": 1
+                            }
+                        }
+                    }
+                ]
+            },
+
+            "Connections": {
+                "PolicyModifiers": {
+                    "PolicyType": "POLICY_TEST"
+                }
+            }
+        }
+    ]
+}
