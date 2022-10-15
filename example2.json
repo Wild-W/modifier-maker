@@ -30,7 +30,14 @@
                 "Requirements": [
                     {
                         "RequirementType": "REQUIREMENT_PLOT_PROPERTY_MATCHES",
+
+                        "Likeliness": null,
+                        "Impact": false, 
                         "Inverse": false,
+                        "Reverse": false,
+                        "Persistent": false,
+                        "ProgressWeight": false,
+                        "Triggered": false,
 
                         "Arguments": {
                             "PropertyName": {
