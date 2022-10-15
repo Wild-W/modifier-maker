@@ -13,10 +13,9 @@
             },
 
             "SubjectRequirementSet": {
-                "RequirementSetType": "REQUIREMENTSET_TEST_ALL",
+                "RequirementSetType": "REQUIREMENTSET_TEST_ANY",
                 "Requirements": [
                     {
-                        "RequirementId": "REQ_WW_CITY_PLOT_HAS_TEST_PROP",
                         "RequirementType": "REQUIREMENT_PLOT_PROPERTY_MATCHES",
 
                         "Arguments": {
@@ -27,6 +26,15 @@
                                 "Value": 1
                             }
                         }
+                    },
+                    {
+                        "RequirementType": "REQUIREMENT_CITY_IS_ORIGINAL_CAPITAL",
+
+                        "Arguments": {
+                            "Amount": {
+                                "Value": 2
+                            }
+                        }
                     }
                 ]
             },
@@ -34,6 +42,10 @@
             "Connections": {
                 "PolicyModifiers": {
                     "PolicyType": "POLICY_TEST"
+                },
+                "GameModifiers": {},
+                "TraitModifiers": {
+                    "TraitType": "TEST_TRAIT"
                 }
             }
         }

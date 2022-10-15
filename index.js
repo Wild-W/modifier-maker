@@ -10,6 +10,15 @@ const sql_formatter_1 = require("sql-formatter");
 const Param = process.argv[2];
 const FileContents = fs_1.default.readFileSync(Param).toString();
 const FileJSON = JSON.parse(FileContents);
+class sqlDefault {
+    val = "default";
+    constructor() {
+        this.val = "default";
+    }
+}
+squel_1.default.registerValueHandler(sqlDefault, function (obj) {
+    return obj.val;
+});
 function main() {
     const Modifiers = FileJSON.Modifiers;
     let modifiersQuery = squel_1.default.insert().into("Modifiers");
@@ -28,8 +37,9 @@ function main() {
     let reqSets = [];
     let reqSetReqs = [];
     let types = [];
+    let connections = {};
     let connectionQueries = [];
-    let finalStr;
+    let finalStr = "";
     for (let i = 0; i < Modifiers.length; i++) {
         const Modifier = Modifiers[i];
         let modifierType;
@@ -122,8 +132,15 @@ function main() {
             }
         }
         if (Modifier.Connections) {
-            for (const [table, columns] of Object.entries(Modifier.Connections)) {
-                connectionQueries.push(squel_1.default.insert().into(table).setFields(columns));
+            for (const [tableName, columns] of Object.entries(Modifier.Connections)) {
+                connections[tableName] = [];
+                let connection = {
+                    ModifierId: Modifier.ModifierId
+                };
+                for (const [columnName, value] of Object.entries(columns)) {
+                    connection[columnName] = value;
+                }
+                connections[tableName].push(connection);
             }
         }
         modifiers.push({
@@ -139,6 +156,9 @@ function main() {
             ...(subjectRequirementSetId) && { SubjectRequirementSetId: subjectRequirementSetId }
         });
     }
+    for (const [tableName, columnSets] of Object.entries(connections)) {
+        finalStr += `${squel_1.default.insert().into(tableName).setFieldsRows(columnSets)};\n`;
+    }
     modifiersQuery = modifiersQuery.setFieldsRows(modifiers);
     dynamicModifiersQuery = dynamicModifiersQuery.setFieldsRows(modifierTypes);
     modifierArgQuery = modifierArgQuery.setFieldsRows(modifierArgs);
@@ -147,7 +167,7 @@ function main() {
     reqSetsQuery = reqSetsQuery.setFieldsRows(reqSets);
     reqSetReqsQuery = reqSetReqsQuery.setFieldsRows(reqSetReqs);
     typesQuery = typesQuery.setFieldsRows(types);
-    finalStr = `${modifiersQuery};\n${dynamicModifiersQuery};\n${typesQuery};\n${modifierArgQuery};\n` +
+    finalStr += `${modifiersQuery};\n${dynamicModifiersQuery};\n${typesQuery};\n${modifierArgQuery};\n` +
         `${reqSetsQuery};\n${reqSetReqsQuery};\n${reqArgQuery};\n${reqsQuery};\n`;
     fs_1.default.writeFileSync("./output.sql", (0, sql_formatter_1.format)(finalStr));
 }
@@ -158,7 +178,9 @@ function getArguments(Id, queries, args, type) {
                 ModifierId: Id,
                 Name: arg,
                 Value: details.Value,
-                ...(details.Type) && { Type: details.Type }
+                ...(details.Type) && { Type: details.Type },
+                ...(details.Extra) && { Extra: details.Extra },
+                ...(details.SecondExtra) && { SecondExtra: details.SecondExtra }
             });
         }
         else if (type === "req") {
@@ -166,7 +188,9 @@ function getArguments(Id, queries, args, type) {
                 RequirementId: Id,
                 Name: arg,
                 Value: details.Value,
-                ...(details.Type) && { Type: details.Type }
+                Type: details.Type ? details.Type : new sqlDefault(),
+                ...(details.Extra) && { Extra: details.Extra },
+                ...(details.SecondExtra) && { SecondExtra: details.SecondExtra }
             });
         }
     }

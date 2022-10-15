@@ -1,4 +1,4 @@
-import squel, { Insert, Squel } from "squel";
+import squel, { Insert } from "squel";
 import fs from "fs";
 //@ts-ignore
 import { format } from "sql-formatter";
@@ -35,14 +35,16 @@ type JSONSchema = {
 }
 type modArgs = Record<string, {
     Value: any,
-    Type: string
+    Type: string,
+    Extra?: string,
+    SecondExtra?: string
 }>
 type arg = {
     ModifierId?: string,
     RequirementId?: string,
     Name: string,
     Value: string,
-    Type?: string,
+    Type?: string|sqlDefault,
     Extra?: string,
     SecondExtra?: string
 }
@@ -72,6 +74,19 @@ type req = {
 const Param: string = process.argv[2];
 const FileContents: string = fs.readFileSync(Param).toString();
 const FileJSON: JSONSchema = JSON.parse(FileContents);
+
+class sqlDefault
+{
+    val = "default";
+    constructor()
+    {
+        this.val = "default"
+    }
+}
+
+squel.registerValueHandler(sqlDefault, function(obj: sqlDefault) {
+    return obj.val;
+});
 
 function main()
 {
@@ -118,8 +133,9 @@ function main()
         Type: string,
         Kind: string
     }[] = [];
+    let connections: Record<string, any[]> = {};
     let connectionQueries: Insert[] = [];
-    let finalStr: string;
+    let finalStr = "";
 
     for (let i = 0; i < Modifiers.length; i++)
     {
@@ -256,9 +272,17 @@ function main()
 
         if (Modifier.Connections)
         {
-            for (const [table, columns] of Object.entries(Modifier.Connections))
+            for (const [tableName, columns] of Object.entries(Modifier.Connections))
             {
-                connectionQueries.push(squel.insert().into(table).setFields(columns));
+                connections[tableName] = [];
+                let connection: Record<string, any> = {
+                    ModifierId: Modifier.ModifierId
+                };
+                for (const [columnName, value] of Object.entries(columns))
+                {
+                    connection[columnName] = value;
+                }
+                connections[tableName].push(connection);
             }
         }
 
@@ -278,6 +302,11 @@ function main()
         )
     }
 
+    for (const [tableName, columnSets] of Object.entries(connections))
+    {
+        finalStr += `${squel.insert().into(tableName).setFieldsRows(columnSets)};\n`;
+    }
+
     modifiersQuery = modifiersQuery.setFieldsRows(modifiers);
     dynamicModifiersQuery = dynamicModifiersQuery.setFieldsRows(modifierTypes);
     modifierArgQuery = modifierArgQuery.setFieldsRows(modifierArgs);
@@ -287,7 +316,7 @@ function main()
     reqSetReqsQuery = reqSetReqsQuery.setFieldsRows(reqSetReqs);
     typesQuery = typesQuery.setFieldsRows(types);
 
-    finalStr = `${modifiersQuery};\n${dynamicModifiersQuery};\n${typesQuery};\n${modifierArgQuery};\n` +
+    finalStr += `${modifiersQuery};\n${dynamicModifiersQuery};\n${typesQuery};\n${modifierArgQuery};\n` +
                `${reqSetsQuery};\n${reqSetReqsQuery};\n${reqArgQuery};\n${reqsQuery};\n`;
     
     fs.writeFileSync("./output.sql", format(finalStr));
@@ -304,7 +333,9 @@ function getArguments(Id: string, queries: arg[], args: modArgs, type: string): 
                     ModifierId: Id,
                     Name: arg,
                     Value: details.Value,
-                    ...(details.Type) && {Type: details.Type}
+                    ...(details.Type) && {Type: details.Type},
+                    ...(details.Extra) && {Extra: details.Extra},
+                    ...(details.SecondExtra) && {SecondExtra: details.SecondExtra}
                 }
             )
         }
@@ -315,7 +346,9 @@ function getArguments(Id: string, queries: arg[], args: modArgs, type: string): 
                     RequirementId: Id,
                     Name: arg,
                     Value: details.Value,
-                    ...(details.Type) && {Type: details.Type}
+                    Type: details.Type ? details.Type : new sqlDefault(),
+                    ...(details.Extra) && {Extra: details.Extra},
+                    ...(details.SecondExtra) && {SecondExtra: details.SecondExtra}
                 }
             )
         }
