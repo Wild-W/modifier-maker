@@ -4,21 +4,29 @@ VALUES
   ('POLICY_TEST_MODIFIER', 'POLICY_TEST');
 
 INSERT INTO
-  GameModifiers (ModifierId)
-VALUES
-  ('POLICY_TEST_MODIFIER');
-
-INSERT INTO
-  TraitModifiers (ModifierId, TraitType)
-VALUES
-  ('POLICY_TEST_MODIFIER', 'TEST_TRAIT');
-
-INSERT INTO
-  Modifiers (ModifierId, ModifierType, SubjectRequirementSetId)
+  Modifiers (
+    ModifierId,
+    ModifierType,
+    RunOnce,
+    NewOnly,
+    Permanent,
+    Repeatable,
+    OwnerStackLimit,
+    SubjectStackLimit,
+    OwnerRequirementSetId,
+    SubjectRequirementSetId
+  )
 VALUES
   (
     'POLICY_TEST_MODIFIER',
     'MODTYPE_POLICY_TEST_MODIFIER',
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    NULL,
     'REQSET_POLICY_TEST_MODIFIER'
   );
 
@@ -37,9 +45,16 @@ VALUES
   ('MODTYPE_POLICY_TEST_MODIFIER', 'KIND_MODIFIER');
 
 INSERT INTO
-  ModifierArguments (ModifierId, Name, Value)
+  ModifierArguments (ModifierId, Name, Value, Type, Extra, SecondExtra)
 VALUES
-  ('POLICY_TEST_MODIFIER', 'Amount', -100);
+  (
+    'POLICY_TEST_MODIFIER',
+    'Amount',
+    -100,
+    'ARGTYPE_IDENTITY',
+    NULL,
+    NULL
+  );
 
 INSERT INTO
   RequirementSets (RequirementSetId, RequirementSetType)
@@ -55,42 +70,56 @@ VALUES
   (
     'REQSET_POLICY_TEST_MODIFIER',
     'REQ_POLICY_TEST_MODIFIER_0'
-  ),
-  (
-    'REQSET_POLICY_TEST_MODIFIER',
-    'REQ_POLICY_TEST_MODIFIER_1'
   );
 
 INSERT INTO
-  RequirementArguments (RequirementId, Name, Value, Type)
+  RequirementArguments (
+    RequirementId,
+    Name,
+    Value,
+    Type,
+    Extra,
+    SecondExtra
+  )
 VALUES
   (
     'REQ_POLICY_TEST_MODIFIER_0',
     'PropertyName',
     'WW_test_property',
-    (default)
+    'ARGTYPE_IDENTITY',
+    NULL,
+    NULL
   ),
   (
     'REQ_POLICY_TEST_MODIFIER_0',
     'PropertyMinimum',
     1,
-    (default)
-  ),
-  (
-    'REQ_POLICY_TEST_MODIFIER_1',
-    'Amount',
-    2,
-    (default)
+    'ARGTYPE_IDENTITY',
+    NULL,
+    NULL
   );
 
 INSERT INTO
-  Requirements (RequirementId, RequirementType)
+  Requirements (
+    RequirementId,
+    RequirementType,
+    Likeliness,
+    Impact,
+    Inverse,
+    Reverse,
+    Persistent,
+    ProgressWeight,
+    Triggered
+  )
 VALUES
   (
     'REQ_POLICY_TEST_MODIFIER_0',
-    'REQUIREMENT_PLOT_PROPERTY_MATCHES'
-  ),
-  (
-    'REQ_POLICY_TEST_MODIFIER_1',
-    'REQUIREMENT_CITY_IS_ORIGINAL_CAPITAL'
+    'REQUIREMENT_PLOT_PROPERTY_MATCHES',
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
   );

@@ -44,9 +44,9 @@ type arg = {
     RequirementId?: string,
     Name: string,
     Value: string,
-    Type?: string|sqlDefault,
-    Extra?: string,
-    SecondExtra?: string
+    Type?: string,
+    Extra?: string|null,
+    SecondExtra?: string|null
 }
 type modReqs = {
     RequirementType: string,
@@ -75,19 +75,6 @@ const Param: string = process.argv[2];
 const FileContents: string = fs.readFileSync(Param).toString();
 const FileJSON: JSONSchema = JSON.parse(FileContents);
 
-class sqlDefault
-{
-    val = "default";
-    constructor()
-    {
-        this.val = "default"
-    }
-}
-
-squel.registerValueHandler(sqlDefault, function(obj: sqlDefault) {
-    return obj.val;
-});
-
 function main()
 {
     const Modifiers = FileJSON.Modifiers;
@@ -110,8 +97,8 @@ function main()
         Repeatable?: number,
         OwnerStackLimit?: number,
         SubjectStackLimit?: number,
-        OwnerRequirementSetId?: string,
-        SubjectRequirementSetId?: string
+        OwnerRequirementSetId?: string|null,
+        SubjectRequirementSetId?: string|null
     }[] = [];
     let reqs: req[] = [];
     let modifierTypes: {
@@ -211,15 +198,15 @@ function main()
                     {
                         RequirementId: RequirementId,
                         RequirementType: Req.RequirementType,
-                        ...(Req.Likeliness) && {Likeliness: Req.Likeliness},
-                        ...(Req.Impact) && {Impact: 1},
-                        ...(Req.Inverse) && {Inverse: 1},
-                        ...(Req.Reverse) && {Reverse: 1},
-                        ...(Req.Persistent) && {Persistent: 1},
-                        ...(Req.ProgressWeight) && {ProgressWeight: 1},
-                        ...(Req.Triggered) && {Triggered: 1}
+                        Likeliness: Req.Likeliness ? Req.Likeliness : 0,
+                        Impact: Req.Impact ? 1 : 0,
+                        Inverse: Req.Inverse ? 1 : 0,
+                        Reverse: Req.Reverse ? 1 : 0,
+                        Persistent: Req.Persistent ? 1 : 0,
+                        ProgressWeight: Req.ProgressWeight ? 1 : 0,
+                        Triggered: Req.Triggered ? 1 : 0
                     }
-                )
+                );
             }
         }
 
@@ -258,15 +245,15 @@ function main()
                     {
                         RequirementId: RequirementId,
                         RequirementType: Req.RequirementType,
-                        ...(Req.Likeliness) && {Likeliness: Req.Likeliness},
-                        ...(Req.Impact) && {Impact: 1},
-                        ...(Req.Inverse) && {Inverse: 1},
-                        ...(Req.Reverse) && {Reverse: 1},
-                        ...(Req.Persistent) && {Persistent: 1},
-                        ...(Req.ProgressWeight) && {ProgressWeight: 1},
-                        ...(Req.Triggered) && {Triggered: 1}
+                        Likeliness: Req.Likeliness ? Req.Likeliness : 0,
+                        Impact: Req.Impact ? 1 : 0,
+                        Inverse: Req.Inverse ? 1 : 0,
+                        Reverse: Req.Reverse ? 1 : 0,
+                        Persistent: Req.Persistent ? 1 : 0,
+                        ProgressWeight: Req.ProgressWeight ? 1 : 0,
+                        Triggered: Req.Triggered ? 1 : 0
                     }
-                )
+                );
             }
         }
 
@@ -290,14 +277,14 @@ function main()
             {
                 ModifierId: Modifier.ModifierId,
                 ModifierType: modifierType,
-                ...(Modifier.RunOnce) && {RunOnce: 1},
-                ...(Modifier.NewOnly) && {NewOnly: 1},
-                ...(Modifier.Permanent) && {Permanent: 1},
-                ...(Modifier.Repeatable) && {Repeatable: 1},
-                ...(Modifier.OwnerStackLimit) && {OwnerStackLimit: Modifier.OwnerStackLimit},
-                ...(Modifier.SubjectStackLimit) && {SubjectStackLimit: Modifier.SubjectStackLimit},
-                ...(ownerRequirementSetId) && {OwnerRequirementSetId: ownerRequirementSetId},
-                ...(subjectRequirementSetId) && {SubjectRequirementSetId: subjectRequirementSetId}
+                RunOnce: Modifier.RunOnce ? 1 : 0,
+                NewOnly: Modifier.NewOnly ? 1 : 0,
+                Permanent: Modifier.Permanent ? 1 : 0,
+                Repeatable: Modifier.Repeatable ? 1 : 0,
+                OwnerStackLimit: Modifier.OwnerStackLimit ? Modifier.OwnerStackLimit : 0,
+                SubjectStackLimit: Modifier.SubjectStackLimit ? Modifier.SubjectStackLimit : 0,
+                OwnerRequirementSetId: ownerRequirementSetId ? ownerRequirementSetId : null,
+                SubjectRequirementSetId: subjectRequirementSetId ? subjectRequirementSetId : null
             }
         )
     }
@@ -326,32 +313,27 @@ function getArguments(Id: string, queries: arg[], args: modArgs, type: string): 
 {
     for (const [arg, details] of Object.entries(args))
     {
+        // Placeholder, just in case conditions fail
+        let typeOfId = "ModifierId";
         if (type === "mod")
         {
-            queries.push(
-                {
-                    ModifierId: Id,
-                    Name: arg,
-                    Value: details.Value,
-                    ...(details.Type) && {Type: details.Type},
-                    ...(details.Extra) && {Extra: details.Extra},
-                    ...(details.SecondExtra) && {SecondExtra: details.SecondExtra}
-                }
-            )
+            typeOfId = "ModifierId";
         }
         else if (type === "req")
         {
-            queries.push(
-                {
-                    RequirementId: Id,
-                    Name: arg,
-                    Value: details.Value,
-                    Type: details.Type ? details.Type : new sqlDefault(),
-                    ...(details.Extra) && {Extra: details.Extra},
-                    ...(details.SecondExtra) && {SecondExtra: details.SecondExtra}
-                }
-            )
+            typeOfId = "RequirementId";
         }
+
+        queries.push(
+            {
+                [typeOfId]: Id,
+                Name: arg,
+                Value: details.Value,
+                Type: details.Type ? details.Type : "ARGTYPE_IDENTITY",
+                Extra: details.Extra ? details.Extra : null,
+                SecondExtra: details.SecondExtra ? details.SecondExtra : null
+            }
+        );
     }
     return queries;
 }

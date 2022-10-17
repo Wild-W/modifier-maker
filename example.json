@@ -32,7 +32,8 @@
 
                         "Arguments": {
                             "Amount": {
-                                "Value": 2
+                                "Value": 2,
+                                "Type": "ScaleByGameSpeed"
                             }
                         }
                     }
@@ -42,10 +43,6 @@
             "Connections": {
                 "PolicyModifiers": {
                     "PolicyType": "POLICY_TEST"
-                },
-                "GameModifiers": {},
-                "TraitModifiers": {
-                    "TraitType": "TEST_TRAIT"
                 }
             }
         }

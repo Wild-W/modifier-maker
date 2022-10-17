@@ -52,7 +52,7 @@
                     }
                 ]
             },
-            "OwnerRequirementSet": {},
+            "OwnerRequirementSet": null,
 
             "Connections": {
                 "PolicyModifiers": {
