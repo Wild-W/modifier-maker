@@ -1,4 +1,4 @@
 # Modifier Maker
-> Some sort of interface specifically designed for creating modifiers in Civ VI
+> JSON interface specifically designed for simplifying the modifier creation process in Civ VI
 
-TODO: Implementation, current idea is parsing a json file, which should allow for autocomplete based on a schema.
+Script for parsing the JSON file is about finished. What's left to do is create a schema and documentation.
