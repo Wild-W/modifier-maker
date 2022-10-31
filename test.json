@@ -1,0 +1,14 @@
+{
+    "$schema": "./output.json",
+    "Modifiers": [
+        {
+            "ModifierId": "WW_POLICY_TEST_MODIFIER",
+            "EffectType": "EFFECT_PLAYER_ADJUST_FAVOR_FROM_DELEGATIONS",
+            "Arguments": {
+                
+            },
+            "Permanent": true
+
+        }
+    ]
+}

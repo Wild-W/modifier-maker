@@ -19,7 +19,8 @@
   "devDependencies": {
     "@types/node": "^18.8.5",
     "squel": "^5.13.0",
-    "typescript": "^4.8.4"
+    "typescript": "^4.8.4",
+    "typescript-json-schema": "^0.54.0"
   },
   "dependencies": {
     "sql-formatter": "^11.0.2"
